@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>メッセージ送信アプリ</title>
+    </head>
+    <body>
+        <h1 id="displaynamefield"></h1>
+        <button type="button" class="btn btn-danger" id="logout" onclick="LogoutAction();">ログアウト</button>
+        
+
+        {{!--load LIFF SDK--}}
+        <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+        <script>
+            var userId = "";
+            document.getElementById("logout").style.display ="none";
+            window.onload = function() {
+                initializeLiff("LIFF_ID");
+            };
+
+            function initializeLiff(myLiffId) {
+                liff
+                    .init({
+                        liffId: myLiffId
+                    })
+                    .then(() => {
+                        //LINEアプリで起動しているかどうかとログインをしているのかを判断している
+                        if (!liff.isInClient() && !liff.isLoggedIn()){
+                            window.alert("LINEアカウントにログインしてください。");
+                            liff.login();
+                        }else{
+                            // start to use LIFF's api
+                            liff.getProfile().then(function(profile) {
+                                document.getElementById('displaynamefield').textContent = 'ようこそ' + profile.displayName + 'さん';
+                                userId = profile.userId;
+                                if (!liff.isInClient()){
+                                    document.getElementById("logout").style.display = "block"
+                                }
+                            }).catch(function(error) {
+                                window.alert('Error getting profile: ' + error);
+                            })
+                        }
+
+                    })
+                    .catch((err) => {
+                        document.getElementById('displaynamefield').textContent = err;
+                    });
+            }
+            // ログアウトの処理
+            function LogoutAction(){
+                liff.logout();
+                window.location.reload();
+            }
+        </script>
+    </body>
+</html>
