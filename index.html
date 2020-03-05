@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>メッセージ送信アプリ</title>
@@ -8,7 +9,14 @@
         <h1 id="displaynamefield"></h1>
         <button type="button" class="btn btn-danger" id="logout" onclick="LogoutAction();">ログアウト</button>
         
+        <form id="send-message">
+            <p>送信したいメッセージを入れてね</p>
+            <input type="text" id="message" name="message" size="30" placeholder="メッセージを入力">
+            <button id="send">送信</button>
+        </form>
 
+        <!-- load jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <!-- load LIFF SDK -->
         <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
         <script>
@@ -46,6 +54,24 @@
                         document.getElementById('displaynamefield').textContent = err;
                     });
             }
+            // メッセージの送信
+            $(function() {
+                $('#send').click(function(e) {
+                    e.preventDefault();
+                    var val = $('#message').val();
+                    liff.shareTargetPicker([
+                        {
+                            type: "text",
+                            text: val
+                        }
+                        ])
+                        .then(
+                            alert("メッセージを送信しました")
+                        ).catch(function(res) {
+                            alert("送信に失敗しました")
+                        })
+                });
+            });
             // ログアウトの処理
             function LogoutAction(){
                 liff.logout();
